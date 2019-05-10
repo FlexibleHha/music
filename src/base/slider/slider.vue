@@ -4,7 +4,7 @@
       <slot></slot>
     </div>
     <div class="dots">
-      <span class="dot"></span>
+      <span class="dot" v-for="(item, index) in dots" :key="index"></span>
     </div>
   </div>
 </template>
@@ -36,4 +36,9 @@ export default {
         box-sizing border-box
         overflow hidden
         text-align center
+        a
+          display block
+          width 100%
+          overflow hidden
+          text-decoration none 
 </style>
