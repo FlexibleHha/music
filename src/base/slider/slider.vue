@@ -25,7 +25,7 @@ export default {
     },
     interval: {
       type: Number,
-      default: 4000
+      default: 3000
     }
   },
   data() {
@@ -35,6 +35,12 @@ export default {
     }
   },
   methods: {
+		refresh() {
+			if (this.slider) {
+				this._setSliderWidth()
+				this.slider.refresh()
+			}
+		},
     _setSliderWidth(isResize) {
       this.children = this.$refs.sliderGroup.children
 
@@ -82,7 +88,7 @@ export default {
       }
     },
     _play() {
-			clearTimeout(timer)
+			clearTimeout(this.timer)
       this.timer = setTimeout(() => {
         this.slider.next()
       }, this.interval)
@@ -94,11 +100,23 @@ export default {
 			this._initDots()
       this._initSlider()
     })
-		
+		// 自动轮播
+		if (this.autoPlay) {
+			this._play()
+		}
 		window.addEventListener('resize', () => {
 			if (!this.seller || !this.slider.enabled) {
 				return
 			}
+			clearTimeout(this.resizeTimer) 
+			this.resizeTimer = setTimeout(() => {
+				if (this.slider.isIntransition) {
+					this._onscrollEnd()
+				} else {
+					this._play()
+				}
+				this.refresh()
+			}, 60)
 			
 		})
   }
