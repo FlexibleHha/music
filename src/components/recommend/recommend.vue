@@ -1,14 +1,16 @@
 <template>
   <div class="recommend" ref="recommend">
     <scroll>
-      <div class="slide-wrapper">
-        <slider>
-          <div v-for="(item, index) in recommends" :key="index">
-            <a :href="item.linkUrl">
-              <img :src="item.picUrl">
-            </a>
-          </div>
-        </slider>
+      <div class="slide-wrapper" v-if="recommends.length">
+        <div class="slider-content">
+          <slider>
+            <div v-for="(item, index) in recommends" :key="index">
+              <a :href="item.linkUrl">
+                <img :src="item.picUrl">
+              </a>
+            </div>
+          </slider>
+        </div>
       </div>
       <div class="recommend-list">
         <h1 class="list-title">热门歌单推荐</h1>
@@ -38,7 +40,7 @@ export default {
       getRecommend().then(res => {
         if (res.code === ERR_OK) {
           this.recommends = res.data.slider;
-          console.log(res.data.slider);
+          console.log(this.recommends)
         }
       });
     }
@@ -57,7 +59,9 @@ export default {
   position: fixed;
   top: 88px;
   width: 100%;
-
+  .recommend-content
+    height 100%
+    over
   .slide-wrapper {
     position: relative;
     width: 100%;
