@@ -11,11 +11,11 @@ const DIRECTION_H = 'horizontal'
 const DIRECTION_V = 'vertical'
 export default {
   props: {
-    probeType: {
+    probeType: { // 缓慢拖动
       type: Number,
       default: 1
     },
-    click: {
+    click: { // 是否派发点击事件
       type: Boolean,
       default: false
     },
@@ -23,7 +23,7 @@ export default {
       type: Boolean,
       default: false
     },
-    data: {
+    data: { // 是否有数据
       type: Array,
       default: null
     },
@@ -45,7 +45,9 @@ export default {
     }
   },
   mounted() {
-
+    setTimeout(() => {
+      this._initScroll()
+    }, 20);
   },
   methods: {
     _initScroll() {

@@ -15,7 +15,8 @@
     "jsonp": "0.2.1",
     "axios": "^0.16.1",
     "better-scroll": "^1.6.0",
-    "fastclick": "^1.0.6"
+    "fastclick": "^1.0.6",
+    "vue-lazyload": "1.0.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.7.0",
