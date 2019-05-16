@@ -10,6 +10,7 @@
 	import ListView from 'base/listview/listview'
 	import { getSingerList } from 'api/singer'
 	import { ERR_OK } from 'api/config'
+	import { mapMutations } from 'vuex'
 	
 	const HOT_SINGER_LEN = 10
 	const HOT_NAME = '热门'
@@ -28,6 +29,7 @@
 				this.$router.push({
 					path: `/singer/${singer.id}`
 				})
+				this.setSinger(singer)
 			},
 			_getSingerList() {
 				getSingerList().then((res) => {
@@ -35,9 +37,6 @@
 						this.singers = this._normalizeSinger(res.data.list)
 					}
 				})
-			},
-			_getSingerDetail() {
-				
 			},
 			// 解析数据
 			_normalizeSinger(list) {
@@ -81,7 +80,10 @@
 					return a.title.charCodeAt(0) - b.title.charCodeAt(0)
 				})
 				return hot.concat(ret)
-			}
+			},
+			...mapMutations({
+				setSinger: 'SET_SINGER'
+			})
 		},
 		components: {
 			ListView
