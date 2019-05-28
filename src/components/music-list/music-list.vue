@@ -4,7 +4,7 @@
       <i class="icon-back"></i>
     </div>
     <h1 class="title" v-html="title"></h1>
-    <div class="bg-image">
+    <div class="bg-image" :style="bgStyle">
       <div class="player-wrapper">
         <i class="icon-play"></i>
         <span class="text">随机播放</span>
@@ -12,7 +12,7 @@
       <div class="filter"></div>
     </div>
     <div class="bg-layer"></div>
-    <scroll>
+    <scroll class="list">
       <div class="song-list-wrapper">
         <song-list :songs="songs"></song-list>
       </div>
@@ -44,6 +44,11 @@ export default {
   },
   data() {
     return {};
+  },
+  computed: {
+    bgStyle() {
+      return `background-image: url(${this.bgImage})`
+    }
   },
   created() {
     this.probeType = 3
