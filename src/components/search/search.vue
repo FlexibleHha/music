@@ -1,14 +1,16 @@
 <template>
   <div class="search">
-    <div class="search-box-wrapper"></div>
+    <div class="search-box-wrapper">
+      <search-box ref="searchBox" @query="onQueryChange"></search-box>
+    </div>
     <div class="shortcut-wrapper">
       <scroll>
         <div>
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
             <ul>
-              <li class="item">
-                <span>{{}}</span>
+              <li class="item" v-for="(item, index) in hotKey" :key="index">
+                <span>{{item.k}}</span>
               </li>
             </ul>
           </div>
@@ -38,9 +40,23 @@ import SearchList from "base/search-list/search-list";
 import Scroll from "base/scroll/scroll";
 import Confirm from "base/confirm/confirm";
 import Suggest from "components/suggest/suggest";
+import { getHotKey } from "api/search";
+import { ERR_OK } from "api/config";
 export default {
   data() {
-    return {};
+    return {
+      hotKey: []
+    };
+  },
+  methods: {
+    _getHostKey() {
+      getHotKey().then(res => {
+        if (res.code === ERR_OK) {
+          this.hotKey = res.data.hotKey.slice(0, 10);
+        }
+      });
+    },
+    onQueryChange() {}
   },
   components: {
     SearchBox,
@@ -52,4 +68,18 @@ export default {
 };
 </script>
 
-<style scoped lang="stylus" rel="stylesheet/stylus"></style>
+<style scoped lang="stylus" rel="stylesheet/stylus">
+@import '~common/stylus/variable';
+@import '~common/stylus/mixin';
+
+.search {
+  .search-box-wrapper {
+    margin: 20px;
+  }
+
+  .short-wrapper {
+    position: fixed;
+    top: 178px;
+  }
+}
+</style>
