@@ -3,7 +3,7 @@ import {
 } from "common/js/config";
 import {
   loadSearch
-} from "../../../../lib/music/src/common/js/cache";
+} from "common/js/cache";
 
 const state = {
   singer: {}, // 歌手

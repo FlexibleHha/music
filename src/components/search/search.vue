@@ -47,9 +47,11 @@ import SearchList from "base/search-list/search-list";
 import Scroll from "base/scroll/scroll";
 import Confirm from "base/confirm/confirm";
 import Suggest from "components/suggest/suggest";
+import { searchMixin } from "common/js/mixin";
 import { getHotKey } from "api/search";
 import { ERR_OK } from "api/config";
 export default {
+  mixins: [searchMixin],
   data() {
     return {
       hotKey: []
@@ -68,9 +70,7 @@ export default {
     },
     showConfirm() {
       this.$refs.confirm.show();
-    },
-    onQueryChange() {},
-    addQuery() {}
+    }
   },
   components: {
     SearchBox,
