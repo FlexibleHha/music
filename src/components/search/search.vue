@@ -31,9 +31,11 @@
         </div>
       </scroll>
     </div>
+    <!-- 搜索结果 -->
     <div class="search-result">
       <suggest></suggest>
     </div>
+    <!-- 弹窗 -->
     <confirm ref="confirm"></confirm>
     <router-view></router-view>
   </div>
@@ -67,7 +69,8 @@ export default {
     showConfirm() {
       this.$refs.confirm.show();
     },
-    onQueryChange() {}
+    onQueryChange() {},
+    addQuery() {}
   },
   components: {
     SearchBox,
