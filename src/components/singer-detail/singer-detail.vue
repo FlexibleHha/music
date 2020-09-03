@@ -1,6 +1,8 @@
 <template>
   <transition name="slide">
-    <music-list :songs="songs" :title="title" :bg-image="bgImage"></music-list>
+    <div class="singer-detail">
+      <!-- <music-list :songs="songs" :title="title" :bg-image="bgImage"></music-list> -->
+    </div>
   </transition>
 </template>
 
@@ -13,24 +15,24 @@ import MusicList from "components/music-list/music-list";
 export default {
   data() {
     return {
-      songs: []
+      songs: [],
     };
   },
   created() {
     this._getDetail();
   },
   computed: {
-		title() {
-			return this.singer.name
-		},
-		bgImage() {
-			return this.singer.avatar
-		},
-    ...mapGetters(["singer"])
+    title() {
+      return this.singer.name;
+    },
+    bgImage() {
+      return this.singer.avatar;
+    },
+    ...mapGetters(["singer"]),
   },
   methods: {
     _getDetail() {
-      getSingerDetail(this.singer.id).then(res => {
+      getSingerDetail(this.singer.id).then((res) => {
         if (res.code === ERR_OK) {
           this.songs = this._normalizeSongs(res.data.list);
           console.log(res.data.list);
@@ -40,23 +42,34 @@ export default {
     },
     _normalizeSongs(list) {
       let ret = [];
-      list.forEach(item => {
+      list.forEach((item) => {
         let { musicData } = item;
         if (musicData.songid && musicData.albummid) {
           ret.push(createSong(musicData));
         }
       });
       return ret;
-    }
+    },
   },
   components: {
-    MusicList
-  }
+    MusicList,
+  },
 };
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
 @import '~common/stylus/variable';
+
+.singer-detail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  background-color: $color-background;
+}
+
 .slide-enter-active, .slide-leave-active {
   transition: all 0.3s;
 }
