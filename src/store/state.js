@@ -10,7 +10,7 @@ const state = {
   playing: false,
   fullScreen: false,
   playList: [], // 正在播放的列表
-  sequenceList: [], // 随机播放列表
+  sequenceList: [], // 顺序列表
   mode: playMode.sequence, // 播放的模式
   currentIndex: -1,
   disc: {},

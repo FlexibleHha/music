@@ -5,106 +5,108 @@
 </template>
 
 <script type="text/ecmascript-6">
-import BScroll from 'better-scroll'
-import { setTimeout } from 'timers';
-const DIRECTION_H = 'horizontal'
-const DIRECTION_V = 'vertical'
+import BScroll from "better-scroll";
+import { setTimeout } from "timers";
+const DIRECTION_H = "horizontal";
+const DIRECTION_V = "vertical";
 export default {
   props: {
-    probeType: { // 缓慢拖动
+    probeType: {
+      // 缓慢拖动
       type: Number,
-      default: 1
+      default: 1,
     },
-    click: { // 是否派发点击事件
+    click: {
+      // 是否派发点击事件
       type: Boolean,
-      default: false
+      default: false,
     },
     listenScroll: {
       type: Boolean,
-      default: false
+      default: false,
     },
-    data: { // 是否有数据
+    data: {
+      // 是否有数据
       type: Array,
-      default: null
+      default: null,
     },
     pullup: {
       type: Boolean,
-      default: false
+      default: false,
     },
     beforeScroll: {
       type: Boolean,
-      default: false
+      default: false,
     },
     refreshDelay: {
       type: Number,
-      default: 20
+      default: 20,
     },
     direction: {
       type: String,
-      default: DIRECTION_V
-    }
+      default: DIRECTION_V,
+    },
   },
   mounted() {
     setTimeout(() => {
-      this._initScroll()
+      this._initScroll();
     }, 20);
   },
   methods: {
     _initScroll() {
       if (!this.$refs.wrapper) {
-        return
+        return;
       }
 
       this.scroll = new BScroll(this.$refs.wrapper, {
         probeType: this.probeType,
         click: this.click,
-        eventPassthrough: this.direction === DIRECTION_V ? DIRECTION_H : DIRECTION_V
-      })
+        eventPassthrough:
+          this.direction === DIRECTION_V ? DIRECTION_H : DIRECTION_V,
+      });
 
       if (this.listenScroll) {
-        this.scroll.on('scroll', (pos) => {
-          this.$emit('scroll', pos)
-        })
+        this.scroll.on("scroll", (pos) => {
+          this.$emit("scroll", pos);
+        });
       }
 
       if (this.pullup) {
-        this.scroll.on('scrpllEnd', () => {
-          this.$emit('scrollToEnd')
-        })
+        this.scroll.on("scrpllEnd", () => {
+          this.$emit("scrollToEnd");
+        });
       }
 
       if (this.beforeScroll) {
-        this.scroll.on('beforeScrollStart', () => {
-          this.$emit('beforeScroll')
-        })
+        this.scroll.on("beforeScrollStart", () => {
+          this.$emit("beforeScroll");
+        });
       }
     },
     disable() {
-      this.scroll && this.scroll.disable()
+      this.scroll && this.scroll.disable();
     },
     enable() {
-      this.scroll && this.scroll.enable()
+      this.scroll && this.scroll.enable();
     },
     refresh() {
-      this.scroll && this.scroll.refresh()
+      this.scroll && this.scroll.refresh();
     },
     scrollTo() {
-      this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
+      this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments);
     },
     scrollToElement() {
-      this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
-    }
+      this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments);
+    },
   },
   watch: {
     data() {
       setTimeout(() => {
-        this.refresh()
-      }, this.refreshDelay)
-    }
-  }  
-}
+        this.refresh();
+      }, this.refreshDelay);
+    },
+  },
+};
 </script>
 
-<style scoped lang="stylus" rel="stylesheet/stylus">
-
-</style>
+<style scoped lang="stylus" rel="stylesheet/stylus"></style>
