@@ -24,7 +24,7 @@
       ref="list"
     >
       <div class="song-list-wrapper">
-        <song-list :songs="songs"></song-list>
+        <song-list @select="selectItem" :songs="songs"></song-list>
       </div>
       <div class="loading-container" v-show="!songs.length">
         <loading></loading>
@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import Scroll from "base/scroll/scroll";
 import Loading from "base/loading/loading";
 import SongList from "base/song-list/song-list";
@@ -69,6 +70,13 @@ export default {
     back() {
       this.$router.back();
     },
+    selectItem(item, index) {
+      this.selectPlay({
+        list: this.songs,
+        index,
+      });
+    },
+    ...mapActions(["selectPlay"]),
   },
   computed: {
     bgStyle() {
