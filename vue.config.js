@@ -1,6 +1,8 @@
 const path = require('path')
 const axios = require('axios')
-function resolve (dir) {
+const bodyParser = require('body-parser')
+
+function resolve(dir) {
   return path.join(__dirname, dir)
 }
 module.exports = {
@@ -20,6 +22,21 @@ module.exports = {
           console.log(e)
         })
       })
+
+      app.post('/api/getPurlUrl', bodyParser.json(), function (req, res) {
+        const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
+        axios.post(url, req.body, {
+          headers: {
+            referer: 'https://y.qq.com/',
+            origin: 'https://y.qq.com',
+            'Content-type': 'application/x-www-form-urlencoded'
+          }
+        }).then((response) => {
+          res.json(response.data)
+        }).catch((e) => {
+          console.log(e)
+        })
+      })
     }
   },
   css: {
@@ -31,7 +48,7 @@ module.exports = {
     }
   },
   // 配置别名
-  chainWebpack (config) {
+  chainWebpack(config) {
     config.resolve.alias
       .set('components', resolve('src/components'))
       .set('common', resolve('src/common'))

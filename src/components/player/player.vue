@@ -45,7 +45,11 @@
               <i class="icon-prev"></i>
             </div>
             <div class="icon i-center">
-              <i class="needsclick"></i>
+              <i
+                class="needsclick"
+                @click="togglePlaying"
+                :class="playIcon"
+              ></i>
             </div>
             <div class="icon i-right ">
               <i class="icon-next"></i>
@@ -68,8 +72,16 @@
           <h2 class="name" v-html="currentSong.name"></h2>
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
-        <div class="control"></div>
-        <div class="control"></div>
+        <div class="control">
+          <i
+            @click.stop="togglePlaying"
+            class="icon-mini"
+            :class="miniIcon"
+          ></i>
+        </div>
+        <div class="control">
+          <i class="icon-playlist"></i>
+        </div>
       </div>
     </transition>
     <audio ref="audio" :src="currentSong.url"></audio>
@@ -90,7 +102,13 @@ export default {
     console.log(this.currentSong);
   },
   computed: {
-    ...mapGetters(["fullScreen", "playList", "currentSong"])
+    playIcon() {
+      return this.playing ? "icon-pause" : "icon-play";
+    },
+    miniIcon() {
+      return this.playing ? "icon-pause-mini" : "icon-play-mini";
+    },
+    ...mapGetters(["fullScreen", "playList", "currentSong", "playing"])
   },
   methods: {
     back() {
@@ -159,8 +177,12 @@ export default {
         scale
       };
     },
+    togglePlaying() {
+      this.setPlaying(!this.playing);
+    },
     ...mapMutations({
-      setFullScreen: "SET_FULLSCREEN"
+      setFullScreen: "SET_FULLSCREEN",
+      setPlaying: "SET_PLAYING"
     })
   },
   components: {},
@@ -168,6 +190,12 @@ export default {
     currentSong() {
       this.$nextTick(() => {
         this.$refs.audio.play();
+      });
+    },
+    playing(newPlaying) {
+      const audio = this.$refs.audio;
+      this.$nextTick(() => {
+        newPlaying ? audio.play() : audio.pause();
       });
     }
   }
@@ -423,6 +451,21 @@ export default {
         no-wrap();
         font-size: $font-size-small;
         color: $color-text-d;
+      }
+    }
+
+    .control {
+      flex: 0 0 30px;
+      width: 30px;
+      padding: 0 10px;
+
+      .icon-play-mini, .icon-pause-mini, .icon-playlist {
+        font-size: 30px;
+        color: $color-theme-d;
+      }
+
+      .icon-mini {
+        font-size: 32px;
       }
     }
   }

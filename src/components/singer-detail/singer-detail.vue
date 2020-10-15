@@ -7,13 +7,13 @@
 <script>
 import { mapGetters } from "vuex";
 import { getSingerDetail } from "api/singer";
+import { createSong, isValidMusic, processSongsUrl } from "common/js/song";
 import { ERR_OK } from "api/config";
-import { createSong } from "common/js/song";
 import MusicList from "components/music-list/music-list";
 export default {
   data() {
     return {
-      songs: [],
+      songs: []
     };
   },
   created() {
@@ -26,7 +26,7 @@ export default {
     bgImage() {
       return this.singer.avatar;
     },
-    ...mapGetters(["singer"]),
+    ...mapGetters(["singer"])
   },
   methods: {
     _getDetail() {
@@ -34,28 +34,28 @@ export default {
         this.$route.push("/singer");
         return;
       }
-      getSingerDetail(this.singer.id).then((res) => {
+      getSingerDetail(this.singer.id).then(res => {
         if (res.code === ERR_OK) {
-          this.songs = this._normalizeSongs(res.data.list);
-          console.log(res.data.list);
-          console.log(this.songs);
+          processSongsUrl(this._normalizeSongs(res.data.list)).then(songs => {
+            this.songs = songs;
+          });
         }
       });
     },
     _normalizeSongs(list) {
       let ret = [];
-      list.forEach((item) => {
+      list.forEach(item => {
         let { musicData } = item;
         if (musicData.songid && musicData.albummid) {
           ret.push(createSong(musicData));
         }
       });
       return ret;
-    },
+    }
   },
   components: {
-    MusicList,
-  },
+    MusicList
+  }
 };
 </script>
 
