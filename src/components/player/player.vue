@@ -22,7 +22,12 @@
           <div class="middle-l">
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd">
-                <img class="image" :src="currentSong.image" alt="" />
+                <img
+                  class="image"
+                  :class="cdCls"
+                  :src="currentSong.image"
+                  alt=""
+                />
               </div>
             </div>
           </div>
@@ -42,7 +47,7 @@
               <i></i>
             </div>
             <div class="icon i-left">
-              <i class="icon-prev"></i>
+              <i class="icon-prev" @click="prev"></i>
             </div>
             <div class="icon i-center">
               <i
@@ -52,7 +57,7 @@
               ></i>
             </div>
             <div class="icon i-right ">
-              <i class="icon-next"></i>
+              <i class="icon-next" @click="next"></i>
             </div>
             <div class="icon i-right">
               <i class="icon"></i>
@@ -65,7 +70,13 @@
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon">
           <div class="imgWrapper">
-            <img width="40" height="40" :src="currentSong.image" alt="" />
+            <img
+              width="40"
+              :class="cdCls"
+              height="40"
+              :src="currentSong.image"
+              alt=""
+            />
           </div>
         </div>
         <div class="text">
@@ -84,7 +95,12 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url"></audio>
+    <audio
+      ref="audio"
+      :src="currentSong.url"
+      @canplay="onReady"
+      @error="onError"
+    ></audio>
   </div>
 </template>
 
@@ -96,19 +112,30 @@ const transform = prefixStyle("transform");
 
 export default {
   data() {
-    return {};
+    return {
+      songReady: false
+    };
   },
   mounted() {
     console.log(this.currentSong);
   },
   computed: {
+    cdCls() {
+      return this.playing ? "play" : "";
+    },
     playIcon() {
       return this.playing ? "icon-pause" : "icon-play";
     },
     miniIcon() {
       return this.playing ? "icon-pause-mini" : "icon-play-mini";
     },
-    ...mapGetters(["fullScreen", "playList", "currentSong", "playing"])
+    ...mapGetters([
+      "fullScreen",
+      "playList",
+      "currentSong",
+      "playing",
+      "currentIndex"
+    ])
   },
   methods: {
     back() {
@@ -180,9 +207,44 @@ export default {
     togglePlaying() {
       this.setPlaying(!this.playing);
     },
+    next() {
+      if (!this.songReady) {
+        return;
+      }
+      const index = this.currentIndex + 1;
+      if (index === this.playList.length) {
+        index = 0;
+      }
+      this.setCurrentIndex(index);
+      if (!this.playing) {
+        this.togglePlaying(!this.playing);
+      }
+      this.songReady = false;
+    },
+    prev() {
+      if (!this.songReady) {
+        return;
+      }
+      const index = this.currentIndex - 1;
+      if (index === -1) {
+        index = this.playList.length;
+      }
+      this.setCurrentIndex(index);
+      if (!this.playing) {
+        this.togglePlaying(!this.playing);
+      }
+      this.songReady = false;
+    },
+    onReady() {
+      this.songReady = true;
+    },
+    onError() {
+      this.songReady = true;
+    },
     ...mapMutations({
       setFullScreen: "SET_FULLSCREEN",
-      setPlaying: "SET_PLAYING"
+      setPlaying: "SET_PLAYING",
+      setCurrentIndex: "SET_CURRENT_INDEX"
     })
   },
   components: {},
@@ -302,6 +364,10 @@ export default {
               box-sizing: border-box;
               border-radius: 50%;
               border: 10px solid rgba(255, 255, 255, 0.1);
+
+              &.play {
+                animation: rotate 20s linear infinite;
+              }
             }
           }
         }
@@ -428,6 +494,10 @@ export default {
 
         img {
           border-radius: 50%;
+
+          &.play {
+            animation: rotate 20s linear infinite;
+          }
         }
       }
     }
@@ -468,6 +538,16 @@ export default {
         font-size: 32px;
       }
     }
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(360deg);
   }
 }
 </style>
