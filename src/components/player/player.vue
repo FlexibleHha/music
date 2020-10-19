@@ -38,13 +38,18 @@
             <span class="dot"></span>
           </div>
           <div class="progress-wrapper">
-            <span class="time"></span>
-            <div class="progress-bar-wrapper"></div>
-            <span class="time"></span>
+            <span class="time">{{ format(currentTime) }}</span>
+            <div class="progress-bar-wrapper">
+              <progress-bar
+                @percentChange="onPercentChange"
+                :percent="percent"
+              ></progress-bar>
+            </div>
+            <span class="time">{{ format(currentSong.duration) }}</span>
           </div>
           <div class="operators">
-            <div class="icon i-left">
-              <i></i>
+            <div class="icon i-left" @click="changMode">
+              <i :class="iconMode"></i>
             </div>
             <div class="icon i-left">
               <i class="icon-prev" @click="prev"></i>
@@ -84,11 +89,13 @@
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
         <div class="control">
-          <i
-            @click.stop="togglePlaying"
-            class="icon-mini"
-            :class="miniIcon"
-          ></i>
+          <progress-circle :radius="radius" :percent="percent">
+            <i
+              @click.stop="togglePlaying"
+              class="icon-mini"
+              :class="miniIcon"
+            ></i>
+          </progress-circle>
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
@@ -100,6 +107,7 @@
       :src="currentSong.url"
       @canplay="onReady"
       @error="onError"
+      @timeupdate="updateTime"
     ></audio>
   </div>
 </template>
@@ -107,19 +115,31 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import animations from "create-keyframe-animation";
+import ProgressBar from "base/progress-bar/progress-bar";
+import ProgressCircle from "base/progress-circle/progress-circle";
 import { prefixStyle } from "common/js/dom";
+import { playMode } from "common/js/config";
 const transform = prefixStyle("transform");
 
 export default {
   data() {
     return {
-      songReady: false
+      songReady: false,
+      currentTime: 0,
+      radius: 32
     };
   },
   mounted() {
     console.log(this.currentSong);
   },
   computed: {
+    iconMode() {
+      return this.mode === playMode.sequence
+        ? "icon-sequence"
+        : this.mode === playMode.loop
+        ? "icon-loop"
+        : "icon-random";
+    },
     cdCls() {
       return this.playing ? "play" : "";
     },
@@ -129,12 +149,16 @@ export default {
     miniIcon() {
       return this.playing ? "icon-pause-mini" : "icon-play-mini";
     },
+    percent() {
+      return this.currentTime / this.currentSong.duration;
+    },
     ...mapGetters([
       "fullScreen",
       "playList",
       "currentSong",
       "playing",
-      "currentIndex"
+      "currentIndex",
+      "mode"
     ])
   },
   methods: {
@@ -241,13 +265,42 @@ export default {
     onError() {
       this.songReady = true;
     },
+    onPercentChange(percent) {
+      this.$refs.audio.currentTime = this.currentSong.duration * percent;
+    },
+    updateTime(e) {
+      this.currentTime = e.target.currentTime;
+    },
+    format(interval) {
+      interval = interval | 0;
+      const minute = (interval / 60) | 0;
+      const second = this._pad(interval % 60);
+      return `${minute}:${second}`;
+    },
+    _pad(num, n = 2) {
+      let len = num.toString().length;
+      while (len < 2) {
+        num = "0" + num;
+        len++;
+      }
+      return num;
+    },
+    changMode() {
+      const mode = (this.mode + 1) % 3;
+      this.setPlayMode(mode);
+    },
     ...mapMutations({
       setFullScreen: "SET_FULLSCREEN",
       setPlaying: "SET_PLAYING",
-      setCurrentIndex: "SET_CURRENT_INDEX"
+      setCurrentIndex: "SET_CURRENT_INDEX",
+      setPlayMode: "SET_PLAY_MODE",
+      setPlayList: "SET_PLAY_LIST"
     })
   },
-  components: {},
+  components: {
+    ProgressBar,
+    ProgressCircle
+  },
   watch: {
     currentSong() {
       this.$nextTick(() => {
@@ -401,6 +454,10 @@ export default {
         margin: 0px auto;
         padding: 10px 0;
 
+        .progress-bar-wrapper {
+          flex: 1;
+        }
+
         .time {
           color: $color-text;
           font-size: $font-size-small;
@@ -536,6 +593,9 @@ export default {
 
       .icon-mini {
         font-size: 32px;
+        position: absolute;
+        left: 0;
+        top: 0;
       }
     }
   }

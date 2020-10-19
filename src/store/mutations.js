@@ -16,7 +16,7 @@ const mutations = {
   [types.SET_SEQUENCE_LIST](state, paylod) {
     state.sequenceList = paylod
   },
-  [types.SET_MODE](state, paylod) {
+  [types.SET_PLAY_MODE](state, paylod) {
     state.mode = paylod
   },
   [types.SET_CURRENT_INDEX](state, paylod) {
