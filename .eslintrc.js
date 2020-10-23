@@ -13,7 +13,7 @@ module.exports = {
     'eol-last': 0,
     'space-before-function-paren': 0,
     'trailing-comma': 'off',
-    'semi': 'off'
+    'semi': 'off',
   },
   parserOptions: {
     parser: 'babel-eslint'

@@ -6,7 +6,7 @@
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
       <div class="play-wrapper" v-show="songs.length > 0" ref="playBtn">
-        <div class="play">
+        <div class="play" @click="random">
           <i class="icon-play"></i>
           <span class="text">随机播放</span>
         </div>
@@ -39,28 +39,31 @@ import Scroll from "base/scroll/scroll";
 import Loading from "base/loading/loading";
 import SongList from "base/song-list/song-list";
 import { prefixStyle } from "common/js/dom";
+import { playlistMixin } from "common/js/mixin";
 
 const RESERVED_HEIGHT = 40;
 const transform = prefixStyle("transform");
 const backdrop = prefixStyle("backdrop-filter");
 export default {
+  mixins: [playlistMixin],
   props: {
     bgImage: {
       type: String,
-      default: "",
+      default: ""
     },
     songs: {
       type: Array,
-      default: [],
+      default: []
     },
     title: {
       type: String,
-      default: "",
-    },
+      default: ""
+    }
   },
+
   data() {
     return {
-      scrollY: 0,
+      scrollY: 0
     };
   },
   methods: {
@@ -73,15 +76,23 @@ export default {
     selectItem(item, index) {
       this.selectPlay({
         list: this.songs,
-        index,
+        index
       });
     },
-    ...mapActions(["selectPlay"]),
+    random() {
+      this.randomPlay({ list: this.songs });
+    },
+    handlePlayList(playList) {
+      const bottom = playList.length > 0 ? "60px" : "";
+      this.$refs.list.$el.style.bottom = bottom;
+      this.$refs.list.refresh();
+    },
+    ...mapActions(["selectPlay", "randomPlay"])
   },
   computed: {
     bgStyle() {
       return `background-image: url(${this.bgImage})`;
-    },
+    }
   },
   mounted() {
     this.imageHeight = this.$refs.bgImage.clientHeight;
@@ -95,7 +106,7 @@ export default {
   components: {
     Scroll,
     Loading,
-    SongList,
+    SongList
   },
   watch: {
     scrollY(newY) {
@@ -125,8 +136,8 @@ export default {
       }
       this.$refs.bgImage.style.zIndex = zIndex;
       this.$refs.bgImage.style[transform] = `scale(${scale})`;
-    },
-  },
+    }
+  }
 };
 </script>
 
