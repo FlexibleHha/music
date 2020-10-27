@@ -1,15 +1,24 @@
 <template>
-  <div class="rank">
+  <div class="rank" ref="rank">
     <scroll :data="topList" class="toplist" ref="toplist">
       <ul>
-        <li v-for="(item, index) in topList" :key="index" @click="slectItem(item)" class="item">
+        <li
+          v-for="(item, index) in topList"
+          :key="index"
+          @click="selectItem(item)"
+          class="item"
+        >
           <div class="icon">
             <img v-lazy="item.picUrl" width="100" height="100" alt />
           </div>
           <ul class="songlist">
-            <li class="song" v-for="(song, index) in item.songList" :key="index">
-              <span>{{index + 1}}</span>
-              <span>{{song.songname}}-{{song.singer}}</span>
+            <li
+              class="song"
+              v-for="(song, index) in item.songList"
+              :key="index"
+            >
+              <span>{{ index + 1 }}</span>
+              <span>{{ song.songname }}-{{ song.singer }}</span>
             </li>
           </ul>
         </li>
@@ -27,7 +36,11 @@ import Scroll from "base/scroll/scroll";
 import Loading from "base/loading/loading";
 import { getTopList } from "api/rank";
 import { ERR_OK } from "api/config";
+import { playlistMixin } from "common/js/mixin";
+import { mapMutations } from "vuex";
+
 export default {
+  mixins: [playlistMixin],
   data() {
     return {
       topList: []
@@ -37,6 +50,11 @@ export default {
     this._getTopList();
   },
   methods: {
+    handlePlayList(playList) {
+      const bottom = playList.length > 0 ? "60px" : "";
+      this.$refs.rank.style.bottom = bottom;
+      this.$refs.toplist.refresh();
+    },
     _getTopList() {
       getTopList().then(res => {
         if (res.code === ERR_OK) {
@@ -44,11 +62,15 @@ export default {
         }
       });
     },
-    slectItem(item) {
+    selectItem(item) {
       this.$router.push({
         path: `/rank/${item.id}`
       });
-    }
+      this.setTopList(item);
+    },
+    ...mapMutations({
+      setTopList: "SET_TOP_LIST"
+    })
   },
   components: {
     Scroll,

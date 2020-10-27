@@ -1,5 +1,5 @@
 <template>
-  <div class="singer">
+  <div class="singer" ref="singer">
     <list-view ref="list" :data="singers" @select="selectSinger"></list-view>
     <router-view></router-view>
   </div>
@@ -24,7 +24,6 @@ export default {
   },
   created() {
     this._getSingerList();
-    // this._getSingerDetail()
   },
   methods: {
     selectSinger(singer) {
@@ -89,8 +88,7 @@ export default {
     },
     handlePlayList(playList) {
       const bottom = playList.length > 0 ? "60px" : "";
-      this.$refs.list.$el.style.bottom = bottom;
-      console.log(this.$refs.list);
+      this.$refs.singer.style.bottom = bottom;
       this.$refs.list.refresh();
     },
     ...mapMutations({

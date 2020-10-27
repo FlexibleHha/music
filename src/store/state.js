@@ -10,9 +10,9 @@ const state = {
   mode: playMode.sequence, // 播放的模式
   currentIndex: -1,
   disc: {},
-  topList: [],
+  topList: {},
   searchHistory: loadSearch(),
   playHistory: [],
-  favouriteList: []
+  favouriteList: [],
 }
 export default state

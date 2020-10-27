@@ -24,6 +24,12 @@ const mutations = {
   },
   [types.SET_SEARCH_HISTORY](state, paylod) {
     state.searchHistory = paylod
+  },
+  [types.SET_DISC](state, paylod) {
+    state.disc = paylod
+  },
+  [types.SET_TOP_LIST](state, paylod) {
+    state.topList = paylod
   }
 }
 export default mutations

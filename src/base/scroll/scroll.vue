@@ -6,46 +6,48 @@
 
 <script type="text/ecmascript-6">
 import BScroll from "better-scroll";
-import { setTimeout } from "timers";
+
 const DIRECTION_H = "horizontal";
 const DIRECTION_V = "vertical";
+
 export default {
   props: {
     probeType: {
-      // 缓慢拖动
       type: Number,
-      default: 1,
+      default: 1
     },
     click: {
-      // 是否派发点击事件
       type: Boolean,
-      default: false,
+      default: false
     },
     listenScroll: {
       type: Boolean,
-      default: false,
+      default: false
     },
     data: {
-      // 是否有数据
       type: Array,
-      default: null,
+      default: null
     },
     pullup: {
       type: Boolean,
-      default: false,
+      default: false
     },
     beforeScroll: {
       type: Boolean,
-      default: false,
+      default: false
     },
     refreshDelay: {
       type: Number,
-      default: 20,
+      default: 20
     },
     direction: {
       type: String,
-      default: DIRECTION_V,
+      default: DIRECTION_V
     },
+    directionLockThreshold: {
+      type: Number,
+      default: 0
+    }
   },
   mounted() {
     setTimeout(() => {
@@ -57,23 +59,25 @@ export default {
       if (!this.$refs.wrapper) {
         return;
       }
-
       this.scroll = new BScroll(this.$refs.wrapper, {
         probeType: this.probeType,
         click: this.click,
         eventPassthrough:
           this.direction === DIRECTION_V ? DIRECTION_H : DIRECTION_V,
+        directionLockThreshold: this.directionLockThreshold
       });
 
       if (this.listenScroll) {
-        this.scroll.on("scroll", (pos) => {
+        this.scroll.on("scroll", pos => {
           this.$emit("scroll", pos);
         });
       }
 
       if (this.pullup) {
-        this.scroll.on("scrpllEnd", () => {
-          this.$emit("scrollToEnd");
+        this.scroll.on("scrollEnd", () => {
+          if (this.scroll.y <= this.scroll.maxScrollY + 50) {
+            this.$emit("scrollToEnd");
+          }
         });
       }
 
@@ -97,15 +101,15 @@ export default {
     },
     scrollToElement() {
       this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments);
-    },
+    }
   },
   watch: {
     data() {
       setTimeout(() => {
         this.refresh();
       }, this.refreshDelay);
-    },
-  },
+    }
+  }
 };
 </script>
 
